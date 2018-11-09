@@ -49,7 +49,7 @@ function updateColor() {
   );
 
   if (hasDirty) {
-    setColor("#E2A1C2");
+    setColor("#af2828");
   } else {
     resetColor();
   }

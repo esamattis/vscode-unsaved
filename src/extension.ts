@@ -3,7 +3,6 @@ import debounce from "lodash.debounce";
 
 const STATUS_BAR_COLOR = "#af2828";
 const UNSAVED_COLOR = "yellow";
-
 type ColorOptions =
   | {
       "statusBar.background": string;

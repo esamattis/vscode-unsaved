@@ -16,15 +16,7 @@
   "activationEvents": [
     "onCommand:type"
   ],
-  "main": "./out/extension",
-  "contributes": {
-    "commands": [
-      {
-        "command": "extension.sayHello",
-        "title": "Hello World"
-      }
-    ]
-  },
+  "main": "./out/extension.js",
   "scripts": {
     "vscode:prepublish": "npm run compile",
     "compile": "tsc -p ./",

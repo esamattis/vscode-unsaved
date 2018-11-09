@@ -2,7 +2,7 @@
   "name": "unsaved",
   "displayName": "YOU HAVE UNSAVED FILES",
   "description": "Change status bar color when you have some unsaved files so you can actually notice it.",
-  "version": "0.0.1",
+  "version": "0.0.2",
   "publisher": "esamatti",
   "repository": {
     "url": "https://github.com/epeli/vscode-unsaved"

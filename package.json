@@ -1,7 +1,7 @@
 {
   "name": "unsaved",
   "displayName": "YOU HAVE UNSAVED FILES",
-  "description": "Change status bar color when you have some unsaved files so you can actually notice it.",
+  "description": "Makes you actually notice when you have unsaved files",
   "version": "0.0.2",
   "publisher": "esamatti",
   "repository": {

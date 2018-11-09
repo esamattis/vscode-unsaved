@@ -1,29 +1,68 @@
-'use strict';
-// The module 'vscode' contains the VS Code extensibility API
-// Import the module and reference it with the alias vscode in your code below
-import * as vscode from 'vscode';
+import * as vscode from "vscode";
+import debounce from "lodash.debounce";
 
-// this method is called when your extension is activated
-// your extension is activated the very first time the command is executed
+type ColorOptions =
+  | {
+      "statusBar.background": string;
+      "statusBar.noFolderBackground": string;
+      "statusBar.debuggingBackground": string;
+    }
+  | undefined;
+
+function setColor(background: string) {
+  const currentColors: ColorOptions = vscode.workspace
+    .getConfiguration("workbench")
+    .get("colorCustomizations");
+
+  const colors = Object.assign(currentColors || {}, {
+    "statusBar.background": background,
+    "statusBar.noFolderBackground": background,
+    "statusBar.debuggingBackground": background
+  });
+
+  vscode.workspace
+    .getConfiguration("workbench")
+    .update("colorCustomizations", colors, true);
+}
+
+function resetColor() {
+  const colors: ColorOptions = vscode.workspace
+    .getConfiguration("workbench")
+    .get("colorCustomizations");
+
+  if (!colors) {
+    return;
+  }
+
+  delete colors["statusBar.background"];
+  delete colors["statusBar.noFolderBackground"];
+  delete colors["statusBar.debuggingBackground"];
+
+  vscode.workspace
+    .getConfiguration("workbench")
+    .update("colorCustomizations", colors, true);
+}
+
+function updateColor() {
+  const hasDirty = vscode.workspace.textDocuments.some(
+    editor => editor.isDirty
+  );
+
+  if (hasDirty) {
+    setColor("#E2A1C2");
+  } else {
+    resetColor();
+  }
+}
+
+const debouncedUpdate = debounce(updateColor, 500);
+
 export function activate(context: vscode.ExtensionContext) {
+  const disposable = vscode.workspace.onDidChangeTextDocument(() => {
+    debouncedUpdate();
+  });
 
-    // Use the console to output diagnostic information (console.log) and errors (console.error)
-    // This line of code will only be executed once when your extension is activated
-    console.log('Congratulations, your extension "unsaved" is now active!');
-
-    // The command has been defined in the package.json file
-    // Now provide the implementation of the command with  registerCommand
-    // The commandId parameter must match the command field in package.json
-    let disposable = vscode.commands.registerCommand('extension.sayHello', () => {
-        // The code you place here will be executed every time your command is executed
-
-        // Display a message box to the user
-        vscode.window.showInformationMessage('Hello World!');
-    });
-
-    context.subscriptions.push(disposable);
+  context.subscriptions.push(disposable);
 }
 
-// this method is called when your extension is deactivated
-export function deactivate() {
-}
+export function deactivate() {}

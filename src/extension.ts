@@ -3,6 +3,9 @@ import debounce from "lodash.debounce";
 
 const STATUS_BAR_COLOR = "#af2828";
 const UNSAVED_COLOR = "yellow";
+
+let STATUS_BAR_ITEM: vscode.StatusBarItem;
+
 type ColorOptions =
   | {
       "statusBar.background": string;
@@ -26,8 +29,6 @@ function setHilight() {
     .getConfiguration("workbench")
     .update("colorCustomizations", colors, true);
 }
-
-let STATUS_BAR_ITEM: vscode.StatusBarItem;
 
 function resetColor() {
   const colors: ColorOptions = vscode.workspace
@@ -61,8 +62,6 @@ function updateColor() {
   }
 }
 
-const debouncedUpdate = debounce(updateColor, 500);
-
 function createStatusBarItem() {
   const item = vscode.window.createStatusBarItem(
     vscode.StatusBarAlignment.Left,
@@ -79,13 +78,15 @@ function createStatusBarItem() {
 
 export function activate(context: vscode.ExtensionContext) {
   STATUS_BAR_ITEM = createStatusBarItem();
+  context.subscriptions.push(STATUS_BAR_ITEM);
 
-  const disposable = vscode.workspace.onDidChangeTextDocument(() => {
+  const debouncedUpdate = debounce(updateColor, 500);
+
+  const listener = vscode.workspace.onDidChangeTextDocument(() => {
     debouncedUpdate();
   });
 
-  context.subscriptions.push(STATUS_BAR_ITEM);
-  context.subscriptions.push(disposable);
+  context.subscriptions.push(listener);
 }
 
 export function deactivate() {}

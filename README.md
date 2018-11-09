@@ -3,6 +3,8 @@
 I think Visual Studio Code does make it clear enough when you have usaved
 files. This extension tries to make it more clear!
 
+![screenshot](https://raw.githubusercontent.com/epeli/vscode-unsaved/master/screenshot.png)
+
 ### Caveat
 
 This extension edits the `colorCustomizations` option fields `statusBar.background`

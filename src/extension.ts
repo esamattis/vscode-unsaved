@@ -14,7 +14,7 @@ type ColorOptions =
     }
   | undefined;
 
-function setHilight() {
+function setStatusBarHilight() {
   const currentColors: ColorOptions = vscode.workspace
     .getConfiguration("workbench")
     .get("colorCustomizations");
@@ -30,7 +30,7 @@ function setHilight() {
     .update("colorCustomizations", colors, true);
 }
 
-function resetColor() {
+function resetStatusBarHilight() {
   const colors: ColorOptions = vscode.workspace
     .getConfiguration("workbench")
     .get("colorCustomizations");
@@ -54,10 +54,10 @@ function updateColor() {
   );
 
   if (hasDirty) {
-    setHilight();
+    setStatusBarHilight();
     STATUS_BAR_ITEM.show();
   } else {
-    resetColor();
+    resetStatusBarHilight();
     STATUS_BAR_ITEM.hide();
   }
 }
@@ -88,5 +88,3 @@ export function activate(context: vscode.ExtensionContext) {
 
   context.subscriptions.push(listener);
 }
-
-export function deactivate() {}

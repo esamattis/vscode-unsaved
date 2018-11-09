@@ -32,11 +32,13 @@
     "postinstall": "node ./node_modules/vscode/bin/install",
     "test": "npm run compile && node ./node_modules/vscode/bin/test"
   },
+  "dependencies": {
+    "lodash.debounce": "^4.0.8"
+  },
   "devDependencies": {
     "@types/lodash.debounce": "^4.0.4",
     "@types/mocha": "^5.2.5",
     "@types/node": "^10.12.4",
-    "lodash.debounce": "^4.0.8",
     "tslint": "^5.11.0",
     "typescript": "^3.1.6",
     "vscode": "^1.1.21"

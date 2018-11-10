@@ -31,10 +31,10 @@ class UnsavedTracker {
   workbenchConfig = vscode.workspace.getConfiguration("workbench");
 
   listener = vscode.workspace.onDidChangeTextDocument(
-    debounce(this.updateColor.bind(this), 600)
+    debounce(this.updateHilightStatus.bind(this), 600)
   );
 
-  updateColor() {
+  updateHilightStatus() {
     const hasUnsavedFiles = vscode.workspace.textDocuments.some(
       editor => editor.isDirty
     );

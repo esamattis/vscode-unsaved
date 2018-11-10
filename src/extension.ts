@@ -4,8 +4,6 @@ import debounce from "lodash.debounce";
 const STATUS_BAR_COLOR = "#af2828";
 const UNSAVED_COLOR = "yellow";
 
-let STATUS_BAR_ITEM: vscode.StatusBarItem;
-
 type ColorOptions =
   | {
       "statusBar.background": string;
@@ -14,7 +12,7 @@ type ColorOptions =
     }
   | undefined;
 
-function setStatusBarHilight() {
+function activateStatusBarHilight() {
   const currentColors: ColorOptions = vscode.workspace
     .getConfiguration("workbench")
     .get("colorCustomizations");
@@ -48,20 +46,6 @@ function resetStatusBarHilight() {
     .update("colorCustomizations", colors, true);
 }
 
-function updateColor() {
-  const hasDirty = vscode.workspace.textDocuments.some(
-    editor => editor.isDirty
-  );
-
-  if (hasDirty) {
-    setStatusBarHilight();
-    STATUS_BAR_ITEM.show();
-  } else {
-    resetStatusBarHilight();
-    STATUS_BAR_ITEM.hide();
-  }
-}
-
 function createStatusBarItem() {
   const item = vscode.window.createStatusBarItem(
     vscode.StatusBarAlignment.Left,
@@ -76,15 +60,33 @@ function createStatusBarItem() {
   return item;
 }
 
+class UnsavedTracker {
+  statusBarItem = createStatusBarItem();
+
+  listener = vscode.workspace.onDidChangeTextDocument(
+    debounce(this.updateColor.bind(this), 600)
+  );
+
+  updateColor() {
+    const hasUnsavedFiles = vscode.workspace.textDocuments.some(
+      editor => editor.isDirty
+    );
+
+    if (hasUnsavedFiles) {
+      activateStatusBarHilight();
+      this.statusBarItem.show();
+    } else {
+      resetStatusBarHilight();
+      this.statusBarItem.hide();
+    }
+  }
+
+  dispose() {
+    this.statusBarItem.dispose();
+    this.listener.dispose();
+  }
+}
+
 export function activate(context: vscode.ExtensionContext) {
-  STATUS_BAR_ITEM = createStatusBarItem();
-  context.subscriptions.push(STATUS_BAR_ITEM);
-
-  const debouncedUpdate = debounce(updateColor, 500);
-
-  const listener = vscode.workspace.onDidChangeTextDocument(() => {
-    debouncedUpdate();
-  });
-
-  context.subscriptions.push(listener);
+  context.subscriptions.push(new UnsavedTracker());
 }

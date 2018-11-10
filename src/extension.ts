@@ -12,40 +12,6 @@ type ColorOptions =
     }
   | undefined;
 
-function activateStatusBarHilight() {
-  const currentColors: ColorOptions = vscode.workspace
-    .getConfiguration("workbench")
-    .get("colorCustomizations");
-
-  const colors = Object.assign(currentColors || {}, {
-    "statusBar.background": STATUS_BAR_COLOR,
-    "statusBar.noFolderBackground": STATUS_BAR_COLOR,
-    "statusBar.debuggingBackground": STATUS_BAR_COLOR
-  });
-
-  vscode.workspace
-    .getConfiguration("workbench")
-    .update("colorCustomizations", colors, true);
-}
-
-function resetStatusBarHilight() {
-  const colors: ColorOptions = vscode.workspace
-    .getConfiguration("workbench")
-    .get("colorCustomizations");
-
-  if (!colors) {
-    return;
-  }
-
-  delete colors["statusBar.background"];
-  delete colors["statusBar.noFolderBackground"];
-  delete colors["statusBar.debuggingBackground"];
-
-  vscode.workspace
-    .getConfiguration("workbench")
-    .update("colorCustomizations", colors, true);
-}
-
 function createStatusBarItem() {
   const item = vscode.window.createStatusBarItem(
     vscode.StatusBarAlignment.Left,
@@ -62,6 +28,7 @@ function createStatusBarItem() {
 
 class UnsavedTracker {
   statusBarItem = createStatusBarItem();
+  workbenchConfig = vscode.workspace.getConfiguration("workbench");
 
   listener = vscode.workspace.onDidChangeTextDocument(
     debounce(this.updateColor.bind(this), 600)
@@ -73,12 +40,42 @@ class UnsavedTracker {
     );
 
     if (hasUnsavedFiles) {
-      activateStatusBarHilight();
+      this.activateStatusBarHilight();
       this.statusBarItem.show();
     } else {
-      resetStatusBarHilight();
+      this.resetStatusBarHilight();
       this.statusBarItem.hide();
     }
+  }
+
+  activateStatusBarHilight() {
+    const currentColors: ColorOptions = this.workbenchConfig.get(
+      "colorCustomizations"
+    );
+
+    const colors = Object.assign(currentColors || {}, {
+      "statusBar.background": STATUS_BAR_COLOR,
+      "statusBar.noFolderBackground": STATUS_BAR_COLOR,
+      "statusBar.debuggingBackground": STATUS_BAR_COLOR
+    });
+
+    this.workbenchConfig.update("colorCustomizations", colors, true);
+  }
+
+  resetStatusBarHilight() {
+    const colors: ColorOptions = this.workbenchConfig.get(
+      "colorCustomizations"
+    );
+
+    if (!colors) {
+      return;
+    }
+
+    delete colors["statusBar.background"];
+    delete colors["statusBar.noFolderBackground"];
+    delete colors["statusBar.debuggingBackground"];
+
+    this.workbenchConfig.update("colorCustomizations", colors, true);
   }
 
   dispose() {

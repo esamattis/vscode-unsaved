@@ -81,14 +81,11 @@ class UnsavedTracker {
     }
 
     debouncedStatusBarHighlightUpdate = debounce(
-        this.updateStatusBarHighlight.bind(this),
+        this.updateStatusBarHighlight,
         2000,
     );
 
-    debouncedStatusBarItemUpdate = debounce(
-        this.updateStatusBarItem.bind(this),
-        200,
-    );
+    debouncedStatusBarItemUpdate = debounce(this.updateStatusBarItem, 200);
 
     changeListener = vscode.workspace.onDidChangeTextDocument(() => {
         this.debouncedStatusBarHighlightUpdate();
@@ -96,11 +93,15 @@ class UnsavedTracker {
     });
 
     saveListener = vscode.workspace.onDidSaveTextDocument(() => {
+        this.debouncedStatusBarHighlightUpdate.cancel();
+        this.debouncedStatusBarItemUpdate.cancel();
         this.updateStatusBarHighlight();
         this.updateStatusBarItem();
     });
 
     dispose() {
+        this.debouncedStatusBarHighlightUpdate.cancel();
+        this.debouncedStatusBarItemUpdate.cancel();
         this.statusBarItem.dispose();
         this.changeListener.dispose();
         this.saveListener.dispose();

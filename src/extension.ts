@@ -27,6 +27,16 @@ function createStatusBarItem() {
     return item;
 }
 
+function getDelay() {
+    const config: any = vscode.workspace.getConfiguration().get("usaved");
+
+    if (config && config.delay) {
+        return config.delay;
+    }
+
+    return 1000;
+}
+
 class UnsavedTracker {
     statusBarItem = createStatusBarItem();
     workbenchConfig = vscode.workspace.getConfiguration("workbench");
@@ -43,22 +53,14 @@ class UnsavedTracker {
         this.updateStatusBarItem();
     });
 
+    delay = getDelay();
+
     debouncedStatusBarHighlightUpdate = debounce(
         this.updateStatusBarHighlight,
-        this.getDelay(),
+        this.delay,
     );
 
     debouncedStatusBarItemUpdate = debounce(this.updateStatusBarItem, 200);
-
-    getDelay() {
-        const config: any = vscode.workspace.getConfiguration().get("usaved");
-
-        if (config && config.delay) {
-            return config.delay;
-        }
-
-        return 1000;
-    }
 
     hasUnsavedFiles() {
         return vscode.workspace.textDocuments.some(editor => editor.isDirty);
@@ -119,6 +121,34 @@ class UnsavedTracker {
     }
 }
 
+class DisposableHolder {
+    disposable: { dispose: Function };
+
+    constructor(disposable: { dispose: Function }) {
+        this.disposable = disposable;
+    }
+
+    dispose() {
+        this.disposable.dispose();
+    }
+}
+
 export function activate(context: vscode.ExtensionContext) {
-    context.subscriptions.push(new UnsavedTracker());
+    let tracker = new UnsavedTracker();
+    const holder = new DisposableHolder(tracker);
+    context.subscriptions.push(holder);
+
+    context.subscriptions.push(
+        vscode.workspace.onDidChangeConfiguration(e => {
+            const newDelay = getDelay();
+            if (tracker.delay !== newDelay) {
+                console.log(
+                    "esamatti.unsaved config changed. Creating new tracker with delay " +
+                        newDelay,
+                );
+                tracker.dispose();
+                holder.disposable = new UnsavedTracker();
+            }
+        }),
+    );
 }

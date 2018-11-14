@@ -2,7 +2,7 @@
     "name": "unsaved",
     "displayName": "YOU HAVE UNSAVED FILES",
     "description": "Makes you actually notice when you have unsaved files",
-    "version": "0.1.5",
+    "version": "0.2.0",
     "publisher": "esamatti",
     "repository": {
         "url": "https://github.com/epeli/vscode-unsaved"

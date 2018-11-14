@@ -5,6 +5,8 @@ files. This extension tries to make it more clear!
 
 ![screenshot](https://raw.githubusercontent.com/epeli/vscode-unsaved/master/screenshot.png)
 
+This especially useful when [working without tabs](https://code.visualstudio.com/docs/getstarted/userinterface#_working-without-tabs).
+
 ### Caveat
 
 This extension edits the `colorCustomizations` option fields

@@ -30,6 +30,25 @@ class UnsavedTracker {
     statusBarItem = createStatusBarItem();
     workbenchConfig = vscode.workspace.getConfiguration("workbench");
 
+    changeListener = vscode.workspace.onDidChangeTextDocument(() => {
+        this.debouncedStatusBarHighlightUpdate();
+        this.debouncedStatusBarItemUpdate();
+    });
+
+    saveListener = vscode.workspace.onDidSaveTextDocument(() => {
+        this.debouncedStatusBarHighlightUpdate.cancel();
+        this.debouncedStatusBarItemUpdate.cancel();
+        this.updateStatusBarHighlight();
+        this.updateStatusBarItem();
+    });
+
+    debouncedStatusBarHighlightUpdate = debounce(
+        this.updateStatusBarHighlight,
+        2000,
+    );
+
+    debouncedStatusBarItemUpdate = debounce(this.updateStatusBarItem, 200);
+
     hasUnsavedFiles() {
         return vscode.workspace.textDocuments.some(editor => editor.isDirty);
     }
@@ -79,25 +98,6 @@ class UnsavedTracker {
 
         this.workbenchConfig.update("colorCustomizations", colors, true);
     }
-
-    debouncedStatusBarHighlightUpdate = debounce(
-        this.updateStatusBarHighlight,
-        2000,
-    );
-
-    debouncedStatusBarItemUpdate = debounce(this.updateStatusBarItem, 200);
-
-    changeListener = vscode.workspace.onDidChangeTextDocument(() => {
-        this.debouncedStatusBarHighlightUpdate();
-        this.debouncedStatusBarItemUpdate();
-    });
-
-    saveListener = vscode.workspace.onDidSaveTextDocument(() => {
-        this.debouncedStatusBarHighlightUpdate.cancel();
-        this.debouncedStatusBarItemUpdate.cancel();
-        this.updateStatusBarHighlight();
-        this.updateStatusBarItem();
-    });
 
     dispose() {
         this.debouncedStatusBarHighlightUpdate.cancel();

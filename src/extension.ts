@@ -27,7 +27,7 @@ function createStatusBarItem() {
     return item;
 }
 
-function getDelay() {
+function getDelay(): number {
     const config: any = vscode.workspace.getConfiguration().get("usaved");
 
     if (config && config.delay) {
@@ -75,6 +75,10 @@ class UnsavedTracker {
     }
 
     updateStatusBarHighlight() {
+        if (String(this.delay) === "0") {
+            return;
+        }
+
         if (this.hasUnsavedFiles()) {
             this.activateStatusBarHighlight();
         } else {

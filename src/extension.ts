@@ -62,6 +62,11 @@ class UnsavedTracker {
 
     debouncedStatusBarItemUpdate = debounce(this.updateStatusBarItem, 200);
 
+    constructor() {
+        this.updateStatusBarHighlight();
+        this.updateStatusBarItem();
+    }
+
     hasUnsavedFiles() {
         return vscode.workspace.textDocuments.some(editor => editor.isDirty);
     }

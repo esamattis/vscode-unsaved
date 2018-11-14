@@ -45,10 +45,20 @@ class UnsavedTracker {
 
     debouncedStatusBarHighlightUpdate = debounce(
         this.updateStatusBarHighlight,
-        2000,
+        this.getDelay(),
     );
 
     debouncedStatusBarItemUpdate = debounce(this.updateStatusBarItem, 200);
+
+    getDelay() {
+        const config: any = vscode.workspace.getConfiguration().get("usaved");
+
+        if (config && config.delay) {
+            return config.delay;
+        }
+
+        return 1000;
+    }
 
     hasUnsavedFiles() {
         return vscode.workspace.textDocuments.some(editor => editor.isDirty);

@@ -1,38 +1,51 @@
 {
-  "name": "unsaved",
-  "displayName": "YOU HAVE UNSAVED FILES",
-  "description": "Makes you actually notice when you have unsaved files",
-  "version": "0.1.5",
-  "publisher": "esamatti",
-  "repository": {
-    "url": "https://github.com/epeli/vscode-unsaved"
-  },
-  "engines": {
-    "vscode": "^1.28.0"
-  },
-  "categories": [
-    "Other"
-  ],
-  "activationEvents": [
-    "onCommand:type"
-  ],
-  "main": "./out/extension.js",
-  "scripts": {
-    "vscode:prepublish": "npm run compile",
-    "compile": "tsc -p ./",
-    "watch": "tsc -watch -p ./",
-    "postinstall": "node ./node_modules/vscode/bin/install",
-    "test": "npm run compile && node ./node_modules/vscode/bin/test"
-  },
-  "dependencies": {
-    "lodash.debounce": "^4.0.8"
-  },
-  "devDependencies": {
-    "@types/lodash.debounce": "^4.0.4",
-    "@types/mocha": "^5.2.5",
-    "@types/node": "^10.12.4",
-    "tslint": "^5.11.0",
-    "typescript": "^3.1.6",
-    "vscode": "^1.1.21"
-  }
+    "name": "unsaved",
+    "displayName": "YOU HAVE UNSAVED FILES",
+    "description": "Makes you actually notice when you have unsaved files",
+    "version": "0.1.5",
+    "publisher": "esamatti",
+    "repository": {
+        "url": "https://github.com/epeli/vscode-unsaved"
+    },
+    "engines": {
+        "vscode": "^1.28.0"
+    },
+    "categories": [
+        "Other"
+    ],
+    "activationEvents": [
+        "onCommand:type"
+    ],
+    "main": "./out/extension.js",
+    "contributes": {
+        "configuration": {
+            "type": "object",
+            "title": "UNSAVED",
+            "properties": {
+                "usaved.delay": {
+                    "type": "number",
+                    "default": 1000,
+                    "description": "Debounce delay for the statusbar hightlight. It can be bit heavy so don't set it too low"
+                }
+            }
+        }
+    },
+    "scripts": {
+        "vscode:prepublish": "npm run compile",
+        "compile": "tsc -p ./",
+        "watch": "tsc -watch -p ./",
+        "postinstall": "node ./node_modules/vscode/bin/install",
+        "test": "npm run compile && node ./node_modules/vscode/bin/test"
+    },
+    "dependencies": {
+        "lodash.debounce": "^4.0.8"
+    },
+    "devDependencies": {
+        "@types/lodash.debounce": "^4.0.4",
+        "@types/mocha": "^5.2.5",
+        "@types/node": "^10.12.4",
+        "tslint": "^5.11.0",
+        "typescript": "^3.1.6",
+        "vscode": "^1.1.21"
+    }
 }

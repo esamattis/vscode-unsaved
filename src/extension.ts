@@ -20,7 +20,8 @@ function createStatusBarItem() {
 
     item.color = UNSAVED_COLOR;
     item.text = "UNSAVED";
-    item.tooltip = "You have at least one unsaved file";
+    item.tooltip = "You have at least one unsaved file. Click to save all.";
+    item.command = "workbench.action.files.saveAll";
     item.hide();
 
     return item;

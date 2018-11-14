@@ -30,25 +30,27 @@ class UnsavedTracker {
     statusBarItem = createStatusBarItem();
     workbenchConfig = vscode.workspace.getConfiguration("workbench");
 
-    listener = vscode.workspace.onDidChangeTextDocument(
-        debounce(this.updateHilightStatus.bind(this), 600),
-    );
+    hasUnsavedFiles() {
+        return vscode.workspace.textDocuments.some(editor => editor.isDirty);
+    }
 
-    updateHilightStatus() {
-        const hasUnsavedFiles = vscode.workspace.textDocuments.some(
-            editor => editor.isDirty,
-        );
-
-        if (hasUnsavedFiles) {
-            this.activateStatusBarHilight();
+    updateStatusBarItem() {
+        if (this.hasUnsavedFiles()) {
             this.statusBarItem.show();
         } else {
-            this.resetStatusBarHilight();
             this.statusBarItem.hide();
         }
     }
 
-    activateStatusBarHilight() {
+    updateStatusBarHighlight() {
+        if (this.hasUnsavedFiles()) {
+            this.activateStatusBarHighlight();
+        } else {
+            this.resetStatusBarHighlight();
+        }
+    }
+
+    activateStatusBarHighlight() {
         const currentColors: ColorOptions = this.workbenchConfig.get(
             "colorCustomizations",
         );
@@ -62,7 +64,7 @@ class UnsavedTracker {
         this.workbenchConfig.update("colorCustomizations", colors, true);
     }
 
-    resetStatusBarHilight() {
+    resetStatusBarHighlight() {
         const colors: ColorOptions = this.workbenchConfig.get(
             "colorCustomizations",
         );
@@ -78,9 +80,24 @@ class UnsavedTracker {
         this.workbenchConfig.update("colorCustomizations", colors, true);
     }
 
+    debouncedStatusBarHighlightUpdate = debounce(
+        this.updateStatusBarHighlight.bind(this),
+        2000,
+    );
+
+    debouncedStatusBarItemUpdate = debounce(
+        this.updateStatusBarItem.bind(this),
+        200,
+    );
+
+    changeListener = vscode.workspace.onDidChangeTextDocument(() => {
+        this.debouncedStatusBarHighlightUpdate();
+        this.debouncedStatusBarItemUpdate();
+    });
+
     dispose() {
         this.statusBarItem.dispose();
-        this.listener.dispose();
+        this.changeListener.dispose();
     }
 }
 

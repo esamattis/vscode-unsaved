@@ -5,9 +5,7 @@ files. This extension tries to make it more clear!
 
 This is especially useful when [working without tabs](https://code.visualstudio.com/docs/getstarted/userinterface#_working-without-tabs).
 
-
 ![screenshot](https://raw.githubusercontent.com/epeli/vscode-unsaved/master/screenshot.png)
-
 
 ### Caveat
 

@@ -150,7 +150,7 @@ export function activate(context: vscode.ExtensionContext) {
                     "esamatti.unsaved config changed. Creating new tracker with delay " +
                         newDelay,
                 );
-                tracker.dispose();
+                holder.disposable.dispose();
                 holder.disposable = new UnsavedTracker();
             }
         }),

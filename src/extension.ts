@@ -95,9 +95,15 @@ class UnsavedTracker {
         this.debouncedStatusBarItemUpdate();
     });
 
+    saveListener = vscode.workspace.onDidSaveTextDocument(() => {
+        this.updateStatusBarHighlight();
+        this.updateStatusBarItem();
+    });
+
     dispose() {
         this.statusBarItem.dispose();
         this.changeListener.dispose();
+        this.saveListener.dispose();
     }
 }
 
